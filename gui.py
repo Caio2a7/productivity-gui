@@ -3,45 +3,58 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import time
 import threading
-import csv
+import pandas
+import numpy as np
 
 day_list = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
-task_list = ['FMC', 'Cálculo', 'ITP', 'Currículo', 'Cursos', 'Leetcode', 'Leitura']
-time_list = [f'00:00:00', '0:00:00', '00:00:00', '00:00:00', '00:00:00', '00:00:00', '00:00:00']
+task_list = ['FMC', 'Calculo', 'ITP', 'Curriculo', 'Cursos', 'Leetcode', 'Leitura']
 
+'''
+with open('tempos.csv', 'r') as arquivo_csv:
+    leitor_csv = csv.reader(arquivo_csv)
+    dados = list(leitor_csv)
+
+    arquivo_csv.close()
+'''
 def expand():
     global sidebar_width
     global padx
 
-    if sidebar_width == 100:
-        while sidebar_width < 150:
-            sidebar_width += 10
-            padx += 10
+    if sidebar_width == 60:
+        while sidebar_width < 100:
+            sidebar_width += 7
+            padx += 7
             left_sidebar_frame.pack_configure(ipadx=padx)
             root.update()
-            root.after(50)
+            root.after(30)
     else:
-        while sidebar_width > 100:
-            sidebar_width -= 10
-            padx -= 10
+        while sidebar_width > 60:
+            sidebar_width -= 7
+            padx -= 7
             left_sidebar_frame.pack_configure(ipadx=padx)
             root.update()
-            root.after(50)
+            root.after(30)
 
 def save_time(dia, tarefa, horas, minutos, segundos):
-    global dias
-    dias[dia].configure(text=f"{horas}:{minutos}:{segundos}")
+    global dia_index,tarefa_index
+    data = pandas.read_csv('tempos.csv')
+    zero_esquerda_s = "" if segundos >= 10 else 0
+    zero_esquerda_m = "" if minutos >= 10 else 0
+    data.iloc[dia, tarefa] = f'{horas}:{zero_esquerda_m}{minutos}:{zero_esquerda_s}{segundos}'
+    data.to_csv('tempos.csv', index=False)
+
 
 def set_timer(dia, tarefa):
-    print(f"{dia} {tarefa}")
-    global is_running, j, i
+    global is_running
     if not is_running:
-        start_timer()
+        start_timer(dia, tarefa)
     else:
         stop_timer(dia, tarefa)
 
-def start_timer():
-    global timer_thread, is_running
+def start_timer(dia, tarefa):
+    global timer_thread, is_running, day, task
+    day = dia
+    task = tarefa
     is_running = True
     timer_thread = threading.Thread(target=update_timer)
     timer_thread.daemon = True
@@ -49,27 +62,38 @@ def start_timer():
 
 def stop_timer(dia, tarefa):
     global tracking_time, is_running
-    horas = int(tracking_time // 3600)
-    minutos = (int(tracking_time % 3600)) // 60
-    segundos = (int(tracking_time % 60))
+    data = pandas.read_csv('tempos.csv')
+    tempo_arm = data.iloc[dia].iloc[tarefa].split(":")
+    tempo_armazenado = int(tempo_arm[0]) * 3600 + int(tempo_arm[1]) * 60 + int(tempo_arm[2])
+    horas = int((tracking_time+tempo_armazenado) // 3600)
+    minutos = (int((tracking_time+tempo_armazenado) % 3600)) // 60
+    segundos = (int((tracking_time+tempo_armazenado) % 60))
     save_time(dia, tarefa, horas, minutos, segundos)
     is_running = False
     tracking_time = 0
-    print(f'{horas} horas | {minutos} minutos | {segundos} segundos')
 
 def update_timer():
-    global tracking_time
+    global tracking_time, widgets_objects, day, task
+    time_list_csv = pandas.read_csv('tempos.csv')
+    tempo_arm = time_list_csv.iloc[day].iloc[task].split(":")
+    tempo_armazenado = int(tempo_arm[0])*3600 + int(tempo_arm[1])*60 + int(tempo_arm[2])
     start_time = time.time()
     while is_running:
         tracking_time = time.time() - start_time
-        time.sleep(1)
+        horas = int((tracking_time+tempo_armazenado) // 3600)
+        minutos = (int((tracking_time+tempo_armazenado) % 3600)) // 60
+        segundos = (int((tracking_time+tempo_armazenado) % 60))
+        zero_esquerda_s = "" if segundos >= 10 else 0
+        zero_esquerda_m = "" if minutos >= 10 else 0
+        widgets_objects[day][task].configure(text=f"{horas}:{zero_esquerda_m}{minutos}:{zero_esquerda_s}{segundos}")
 
 
 root = ctk.CTk()
 ctk.set_appearance_mode("dark")
+root.config(background='black')
 ctk.set_default_color_theme("green")
 
-root.title("Productivity Management")
+root.title("Scriptum")
 
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
@@ -78,40 +102,75 @@ root.geometry(f"{screen_width-200}x{screen_height-200}")
 caminho_icone = '.\greek-column_48051.ico'
 root.iconbitmap(caminho_icone)
 
-sidebar_width = 100
+sidebar_width = 60
 padx = 0
 
-left_sidebar_frame = ctk.CTkFrame(master=root, width=sidebar_width, height=500, fg_color='#373838')
+left_sidebar_frame = ctk.CTkFrame(master=root, width=sidebar_width, height=500, fg_color='#110F13')
 left_sidebar_frame.pack(side='left', fill='y')
 
-button_expand = ctk.CTkButton(master=left_sidebar_frame, text="Open", command=expand, width=75, fg_color='#00DF24')
-button_expand.place(x=10, y=10)
+button_bar = Image.open(".\Button.png")
+button_bar = button_bar.resize((20, 20))
+button_bar = ImageTk.PhotoImage(button_bar)
 
-right_sidebar_frame = ctk.CTkFrame(master=root, width=sidebar_width, height=500, fg_color='#373838')
-right_sidebar_frame.pack(side='right', fill='y')
+image_graph = Image.open(".\graph.png")
+image_graph = image_graph.resize((20, 20))
+image_graph = ImageTk.PhotoImage(image_graph)
 
-click_btn = Image.open('D:\Python_Projetos\Productivity_Analyser-main\Group 5.png')
+image_reset = Image.open(".\Reset.png")
+image_reset = image_reset.resize((20, 20))
+image_reset = ImageTk.PhotoImage(image_reset)
+
+click_btn = Image.open('.\Group 5.png')
 click_btn = click_btn.resize((30, 30))
 click_btn = ImageTk.PhotoImage(click_btn)
 
-content_frame = ctk.CTkScrollableFrame(master=root, width=800, height=1000)
+image_clipboard = Image.open(".\clipboard-55.png")
+image_clipboard = image_clipboard.resize((20, 20))
+image_clipboard = ImageTk.PhotoImage(image_clipboard)
+
+image_spreadsheet = Image.open(".\spread.png")
+image_spreadsheet = image_spreadsheet.resize((20, 20))
+image_spreadsheet = ImageTk.PhotoImage(image_spreadsheet)
+
+button_expand = ctk.CTkButton(master=left_sidebar_frame, text="", image=button_bar, command=expand, width=8)
+button_expand.place(x=15, y=10)
+
+button_graph = ctk.CTkButton(master=left_sidebar_frame, text="", image=image_graph, width=8)
+button_graph.place(x=15, y=60)
+
+butto_reset = ctk.CTkButton(master=left_sidebar_frame, text="", image=image_reset, width=8)
+butto_reset.place(x=15, y=110)
+
+button_clipboard = ctk.CTkButton(master=left_sidebar_frame, text="", image=image_clipboard, width=8)
+button_clipboard.place(x=15, y=160)
+
+button_spreadsheet = ctk.CTkButton(master=left_sidebar_frame, text="", image=image_spreadsheet, width=8)
+button_spreadsheet.place(x=15, y=210)
+
+right_sidebar_frame = ctk.CTkFrame(master=root, width=sidebar_width, height=500, fg_color='#110F13')
+right_sidebar_frame.pack(side='right', fill='y')
+
+content_frame = ctk.CTkScrollableFrame(master=root, width=800, height=1000, fg_color='black')
 content_frame.pack(padx=5, pady=5)
 content_frame.lower()
 
 tracking_time = 0
 is_running = False
 timer_thread = None
-lista_tempos = []
+time_list_csv = pandas.read_csv('tempos.csv')
+widgets_objects = np.empty((7, 5), dtype=object)
+day = 0
+task = 0
 class Create:
 
     def __init(self):
         pass
 
     def create_day(self, day_index):
-        self.day_frame = ctk.CTkFrame(master=content_frame, height=300, width=1000, fg_color='#373838')
+        self.day_frame = ctk.CTkFrame(master=content_frame, height=300, width=1000, fg_color='#110F13')
         self.day_frame.pack(padx=10, pady=10)
         text = ctk.CTkLabel(master=self.day_frame, text=f"{day_list[day_index]}", font=('Calibri', 15, 'bold'),
-                            padx=5, corner_radius=50, fg_color='green')
+                            padx=5, corner_radius=50, fg_color='#2CC985', text_color='#222923')
         text.place(x=5, y=0)
         self.add = 0
 
@@ -124,10 +183,10 @@ class Create:
                                  bg="#110F13", activebackground='#110F13',
                                  border=0, command=lambda: set_timer(day_index, task_index))
         button_timer.place(x=100, y=1)
-        tracked_time = ctk.CTkLabel(master=task_frame, text=f'{time_list[j]}', padx=5, font=('Calibri', 15, 'bold'))
+        tempo = time_list_csv.iloc[day_index].iloc[task_index]
+        tracked_time = ctk.CTkLabel(master=task_frame, text=f'{tempo}', padx=5, font=('Calibri', 15, 'bold'))
         tracked_time.place(x=135, y=2.1)
-        lista_tempos.append(tracked_time)
-        # x=40 e y=5
+        widgets_objects[day_index][task_index] = tracked_time
         self.add += 50
 
 
