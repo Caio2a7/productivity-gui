@@ -1,3 +1,5 @@
+
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
@@ -48,9 +50,9 @@ def observations_graph():
 
     root = customtkinter.CTk()
     root.title("Observacoes para semanas")
-    root.geometry('720x640')
+    root.geometry('800x640')
 
-    frame = customtkinter.CTkFrame(master=root)
+    frame = customtkinter.CTkScrollableFrame(master=root, width=800, height=600)
     frame.pack(pady=0, padx=0)
 
     for semanas, obs in enumerate(df["Observacoes"]):
