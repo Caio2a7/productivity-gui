@@ -19,3 +19,4 @@ ponderada alta, isso pode ser um sinal de que você está focando adequadamente 
 
 Ajustes de Estudo: Se você não estiver satisfeito com os resultados das médias ponderadas, 
 pode considerar ajustar seu plano de estudos para dedicar mais tempo às matérias importantes ou repensar a importância relativa de cada matéria em sua agenda de estudos.
+!(Gráfico de Produtivo do semestre 2023.2)[./assets/Figure_1.png]
