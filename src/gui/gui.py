@@ -1,12 +1,13 @@
 import customtkinter as ctk
 import tkinter as tk
 from PIL import Image, ImageTk
+from tkinter import Tk, PhotoImage
 import time
 import threading
-import pandas
 import numpy as np
-
-
+import func
+import reset
+import pandas
 
 day_list = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
 task_list = ['FMC', 'Calculo', 'ITP', 'Curriculo', 'Cursos', 'Leetcode', 'Leitura']
@@ -40,14 +41,6 @@ def expand():
             root.update()
             root.after(30)
 
-def save_time(dia, tarefa, horas, minutos, segundos):
-    global dia_index,tarefa_index
-    data = pandas.read_csv('tempos.csv')
-    zero_esquerda_s = "" if segundos >= 10 else 0
-    zero_esquerda_m = "" if minutos >= 10 else 0
-    data.iloc[dia, tarefa] = f'{horas}:{zero_esquerda_m}{minutos}:{zero_esquerda_s}{segundos}'
-    data.to_csv('tempos.csv', index=False)
-
 
 def set_timer(dia, tarefa):
     global is_running
@@ -73,7 +66,7 @@ def stop_timer(dia, tarefa):
     horas = int((tracking_time+tempo_armazenado) // 3600)
     minutos = (int((tracking_time+tempo_armazenado) % 3600)) // 60
     segundos = (int((tracking_time+tempo_armazenado) % 60))
-    save_time(dia, tarefa, horas, minutos, segundos)
+    obj.save_time(dia, tarefa, horas, minutos, segundos)
     is_running = False
     tracking_time = 0
 
@@ -92,20 +85,24 @@ def update_timer():
         zero_esquerda_m = "" if minutos >= 10 else 0
         widgets_objects[day][task].configure(text=f"{horas}:{zero_esquerda_m}{minutos}:{zero_esquerda_s}{segundos}")
 
-
+obj_r = reset.Reset()
+obj = func.Teste()
 root = ctk.CTk()
+
 ctk.set_appearance_mode("dark")
 root.config(background='black')
 ctk.set_default_color_theme("green")
 
 root.title("Scriptum")
 
+img = Image.open("greek.png")
+photo = ImageTk.PhotoImage(img)
+root.tk.call('wm', 'iconphoto', root._w, photo)
+
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 root.geometry(f"{screen_width-200}x{screen_height-200}")
 
-caminho_icone = '.\greek-column_48051.ico'
-root.iconbitmap(caminho_icone)
 
 sidebar_width = 60
 padx = 0
@@ -113,27 +110,27 @@ padx = 0
 left_sidebar_frame = ctk.CTkFrame(master=root, width=sidebar_width, height=500, fg_color='#110F13')
 left_sidebar_frame.pack(side='left', fill='y')
 
-button_bar = Image.open(".\Button.png")
+button_bar = Image.open("Button.png")
 button_bar = button_bar.resize((20, 20))
 button_bar = ImageTk.PhotoImage(button_bar)
 
-image_graph = Image.open(".\graph.png")
+image_graph = Image.open("graph.png")
 image_graph = image_graph.resize((20, 20))
 image_graph = ImageTk.PhotoImage(image_graph)
 
-image_reset = Image.open(".\Reset.png")
+image_reset = Image.open("Reset.png")
 image_reset = image_reset.resize((20, 20))
 image_reset = ImageTk.PhotoImage(image_reset)
 
-click_btn = Image.open('.\Group 5.png')
+click_btn = Image.open('Play.png')
 click_btn = click_btn.resize((30, 30))
 click_btn = ImageTk.PhotoImage(click_btn)
 
-image_clipboard = Image.open(".\clipboard-55.png")
+image_clipboard = Image.open("clipboard-55.png")
 image_clipboard = image_clipboard.resize((20, 20))
 image_clipboard = ImageTk.PhotoImage(image_clipboard)
 
-image_spreadsheet = Image.open(".\spread.png")
+image_spreadsheet = Image.open("spread.png")
 image_spreadsheet = image_spreadsheet.resize((20, 20))
 image_spreadsheet = ImageTk.PhotoImage(image_spreadsheet)
 
@@ -143,8 +140,8 @@ button_expand.place(x=15, y=10)
 button_graph = ctk.CTkButton(master=left_sidebar_frame, text="", image=image_graph, width=8)
 button_graph.place(x=15, y=60)
 
-butto_reset = ctk.CTkButton(master=left_sidebar_frame, text="", image=image_reset, width=8)
-butto_reset.place(x=15, y=110)
+button_reset = ctk.CTkButton(master=left_sidebar_frame, text="", command=obj_r.reset(), image=image_reset, width=8)
+button_reset.place(x=15, y=110)
 
 button_clipboard = ctk.CTkButton(master=left_sidebar_frame, text="", image=image_clipboard, width=8)
 button_clipboard.place(x=15, y=160)
@@ -184,8 +181,8 @@ class Create:
         task_frame.place(y=60 + self.add, x=390, anchor='center')
         task_name = ctk.CTkLabel(master=task_frame, text=f'{task_list[j]}', padx=5, font=('Calibri', 15, 'bold'))
         task_name.place(x=20, y=2.1)
-        button_timer = tk.Button(master=task_frame, image=click_btn, borderwidth=0,
-                                 bg="#110F13", activebackground='#110F13',
+        button_timer = tk.Button(master=task_frame, image=click_btn, 
+                                 bg="#110F13", 
                                  border=0, command=lambda: set_timer(day_index, task_index))
         button_timer.place(x=100, y=1)
         tempo = time_list_csv.iloc[day_index].iloc[task_index]
