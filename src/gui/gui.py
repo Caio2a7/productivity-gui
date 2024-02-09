@@ -140,7 +140,7 @@ button_expand.place(x=15, y=10)
 button_graph = ctk.CTkButton(master=left_sidebar_frame, text="", image=image_graph, width=8)
 button_graph.place(x=15, y=60)
 
-button_reset = ctk.CTkButton(master=left_sidebar_frame, text="", command=obj_r.reset(), image=image_reset, width=8)
+button_reset = ctk.CTkButton(master=left_sidebar_frame, text="", command=obj_r.res, image=image_reset, width=8)
 button_reset.place(x=15, y=110)
 
 button_clipboard = ctk.CTkButton(master=left_sidebar_frame, text="", image=image_clipboard, width=8)
