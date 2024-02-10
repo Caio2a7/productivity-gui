@@ -7,14 +7,9 @@ import threading
 import numpy as np
 import sys, os
 
-current_dir = os.path.dirname(os.path.realpath(__file__))
-project_dir = os.path.abspath(os.path.join(current_dir, "../.."))
-sys.path.append(project_dir)
-
-
 from app.data_operations.graphics import data_plot
-from data_operations.io import create
-from utils import reset
+from app.data_operations.io import create
+from app.gui.utils import reset
 
 
 
@@ -35,7 +30,7 @@ obj_r = reset.Reset()
 obj_g = data_plot.Grafico()
 obj = create.Teste()
 
-class MyApp(ctk.CTk):
+class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         ctk.set_appearance_mode("dark")
@@ -50,26 +45,26 @@ class MyApp(ctk.CTk):
         self.padx = 0
         self.left_sidebar_frame = ctk.CTkFrame(master=self, width=self.sidebar_width, height=500, fg_color='#110F13')
         self.left_sidebar_frame.pack(side='left', fill='y')
-        button_bar = Image.open("assets/Button.png")
+        button_bar = Image.open("app/gui/assets/Button.png")
         button_bar = button_bar.resize((20, 20))
         button_bar = ImageTk.PhotoImage(button_bar)
-        image_graph = Image.open("assets/graph.png")
+        image_graph = Image.open("app/gui/assets/graph.png")
         image_graph = image_graph.resize((20, 20))
         image_graph = ImageTk.PhotoImage(image_graph)
 
-        image_reset = Image.open("assets/Reset.png")
+        image_reset = Image.open("app/gui/assets/Reset.png")
         image_reset = image_reset.resize((20, 20))
         image_reset = ImageTk.PhotoImage(image_reset)
 
-        self.click_btn = Image.open('assets/Play.png')
+        self.click_btn = Image.open('app/gui/assets/Play.png')
         self.click_btn = self.click_btn.resize((30, 30))
         self.click_btn = ImageTk.PhotoImage(self.click_btn)
 
-        image_clipboard = Image.open("assets/clipboard-55.png")
+        image_clipboard = Image.open("app/gui/assets/clipboard-55.png")
         image_clipboard = image_clipboard.resize((20, 20))
         image_clipboard = ImageTk.PhotoImage(image_clipboard)
 
-        image_spreadsheet = Image.open("assets/spread.png")
+        image_spreadsheet = Image.open("app/gui/assets/spread.png")
         image_spreadsheet = image_spreadsheet.resize((20, 20))
         image_spreadsheet = ImageTk.PhotoImage(image_spreadsheet)
 
@@ -102,7 +97,7 @@ class MyApp(ctk.CTk):
         self.widgets_objects = np.empty((7, 5), dtype=object)
         self.day = 0
         self.task = 0
-        img = Image.open("assets/greek.png")
+        img = Image.open("app/gui/assets/greek.png")
 
         # Criar o objeto PhotoImage
         self.photo = ImageTk.PhotoImage(img)
@@ -121,7 +116,7 @@ class MyApp(ctk.CTk):
     def create_task(self, day_index, task_index):
         task_frame = ctk.CTkFrame(master=self.day_frame, height=35, width=760, fg_color='#110F13')
         task_frame.place(y=60 + self.add, x=390, anchor='center')
-        task_name = ctk.CTkLabel(master=task_frame, text=f'{task_list[j]}', padx=5, font=('Calibri', 15, 'bold'))
+        task_name = ctk.CTkLabel(master=task_frame, text=f'{task_list[task_index]}', padx=5, font=('Calibri', 15, 'bold'))
         task_name.place(x=20, y=2.1)
         button_timer = tk.Button(master=task_frame, image=self.click_btn, 
                                  bg="#110F13", 
@@ -190,9 +185,11 @@ class MyApp(ctk.CTk):
             zero_esquerda_m = "" if minutos >= 10 else 0
             self.widgets_objects[self.day][self.task].configure(text=f"{horas}:{zero_esquerda_m}{minutos}:{zero_esquerda_s}{segundos}")
 
-app = MyApp()
-for i in range(0, 7):
-    app.create_day(i)
-    for j in range(0, 5):
-        app.create_task(i, j)
-app.mainloop()
+
+def run():
+    app = App()
+    for i in range(0, 7):
+        app.create_day(i)
+        for j in range(0, 5):
+            app.create_task(i, j)
+    app.mainloop()

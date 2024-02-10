@@ -9,7 +9,7 @@ sys.path.append(project_dir)
 
 from app.data_operations.data_analysis import DataAnalysis
 
-with open("../../data/input/productivity_data.json", 'r') as json_file:
+with open("data/input/productivity_data.json", 'r') as json_file:
     DATA = json.load(json_file)
 df = pd.DataFrame(DATA)
 
@@ -50,4 +50,4 @@ class Grafico:
         self.axs[1, 2].set_title("Media Ponderada, Mediana, Desvio Padrao")
         self.axs[1, 2].legend(fontsize="small", loc="lower left")
         # Salvar a imagem do gráfico
-        plt.savefig('../../data/output/grafico_produtividade.png')
+        plt.savefig('data/output/grafico_produtividade.png')

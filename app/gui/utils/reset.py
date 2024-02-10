@@ -17,7 +17,7 @@ class Reset:
     
     def res(self):
         # Abrir um arquivo CSV para escrita
-        with open('../../data/input/tempos.csv', 'w', newline='') as csvfile:
+        with open('data/input/tempos.csv', 'w', newline='') as csvfile:
             fieldnames = widgets_list[0].keys()
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()

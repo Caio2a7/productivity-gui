@@ -3,7 +3,7 @@ from functools import reduce
 import numpy as np
 import json
 
-with open("../../data/input/productivity_data.json", "r") as json_file:
+with open("data/input/productivity_data.json", "r") as json_file:
     DATA = json.load(json_file)
 
 class DataAnalysis:
