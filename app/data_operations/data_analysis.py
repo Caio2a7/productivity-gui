@@ -8,16 +8,16 @@ with open("data/input/productivity_data.json", "r") as json_file:
 
 class DataAnalysis:
     def __init__(self):
-        self.columns = ['FMC', 'Calculo', 'ITP', 'Curriculo', 'Cursos', 'Leetcode', 'Leituras']
-        self.pesos = [3, 2.5, 2, 1.5, 1.5, 1, 1]
+        self.columns = ['Projetos' , 'Cursos', 'AWS', 'Leituras', 'FMC2', 'ARQ', 'EDB1', 'LP1']
+        self.pesos = [3, 1.5, 1.5, 1, 3, 2, 2, 2]
         self.df = pd.DataFrame(DATA)
 
     def weight_average(self):
         weight_product = reduce(lambda x, y: x * y, self.pesos)
-        self.df['Media Ponderada'] = (self.df['FMC'] * self.pesos[0] + self.df['Calculo'] * self.pesos[1] +
-                                      self.df['ITP'] * self.pesos[2] + self.df['Curriculo'] * self.pesos[3] +
-                                      self.df['Cursos'] * self.pesos[4] +
-                                      self.df['Leetcode'] * self.pesos[5] + self.df['Leituras'] * self.pesos[6]) / weight_product
+        self.df['Media Ponderada'] = (self.df['Projetos'] * self.pesos[0] + self.df['Cursos'] * self.pesos[1] +
+                                      self.df['AWS'] * self.pesos[2] + self.df['Leituras'] * self.pesos[3] +
+                                      self.df['FMC2'] * self.pesos[4] +
+                                      self.df['ARQ'] * self.pesos[5] + self.df['EDB1'] * self.pesos[6] + self.df['LP1'] * self.pesos[7]) / weight_product
         return self.df['Media Ponderada']
 
     def median(self):

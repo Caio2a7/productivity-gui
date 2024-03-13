@@ -14,7 +14,7 @@ from app.data_operations.spreadsheets import spreadsheet_maker
 
 
 day_list = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
-task_list = ['Projetos', 'Cursos', 'AWS', 'Leituras', 'FMC 2', 'ARQ', 'EDB1', 'LP1']
+task_list = ['Projetos', 'Cursos', 'AWS', 'Leituras', 'FMC2', 'ARQ', 'EDB1', 'LP1']
 
 '''
 with open('tempos.csv', 'r') as arquivo_csv:
