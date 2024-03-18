@@ -1,13 +1,15 @@
 {
-    "Data": ["4 de março até 10"],
-    "Semana": [1],
-    "Horas totais": [35.35],
-    "Projetos": [25.25],
-    "Cursos": [0],
-    "AWS": [0],
-    "Leituras": [2.30],
-    "FMC2": [2.30],
-    "ARQ": [2.30],
-    "EDB1": [2],
-    "LP1": [2],
-    "Observacoes": ["Foquei muito no desenvolvimento do almoxarifado na parte de projetos, e essa não é a verdadeira 1ª semana, pois na primeira perdi os dados"]}
+    "Data": ["4 de março até 10", "10 de março até 17"],
+    "Semana": [1, 2],
+    "Horas totais": [35.35, 33.06],
+    "Projetos": [25.25, 20.16],
+    "Cursos": [0, 0],
+    "AWS": [0, 0],
+    "Leituras": [2.30, 1.10],
+    "FMC2": [2.30, 2.30],
+    "ARQ": [2.30, 2],
+    "EDB1": [2, 3],
+    "LP1": [2, 4.30],
+    "Observacoes": ["Foquei muito no desenvolvimento do almoxarifado na parte de projetos, e essa não é a verdadeira 1ª semana, pois na primeira perdi os dados",
+                    "Na semana fui convidade para palestrar para introduzir os calouros ao frontend e vue, foi muito em cima da hora e contein essas horas como projeto. Fiquei muito cansado e vagabundei legal no fds"
+                    ]}
